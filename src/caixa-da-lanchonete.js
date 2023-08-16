@@ -2,7 +2,7 @@ class CaixaDaLanchonete {
 
   // Inicialização do cardápio
   constructor() {
-    this.itensList = [
+    this.cardapio = [
       { codigo: 'cafe', valor: 3.00 },
       { codigo: 'chantily', valor: 1.50 },
       { codigo: 'suco', valor: 6.20 },
@@ -21,11 +21,15 @@ class CaixaDaLanchonete {
   }
 
   // Função para verificar itens de acompanhamento
-  isItemExtra(itemCodigo, itensSelecionados) {
+  isItemExtra(itemCodigo, itens) {
     if (itemCodigo === 'chantily') {
-      return !itensSelecionados['cafe'];
+      return !itens.includes('cafe');
     } else if (itemCodigo === 'queijo') {
-      return !itensSelecionados['sanduiche'] && !itensSelecionados['combo1'] && !itensSelecionados['combo2'];
+      return (
+        !itens.includes('sanduiche') &&
+        !itens.includes('combo1') &&
+        !itens.includes('combo2')
+      );
     }
     return false;
   }
@@ -37,12 +41,13 @@ class CaixaDaLanchonete {
 
     let valorCompra = 0;
     const itensSelecionados = {};
+    const listaItens = itens.map(item => item.split(',')[0])
 
     for (const item of itens) {
       const [codigo, quantidadeStr] = item.split(',');
       const quantidade = parseInt(quantidadeStr);
 
-      const itemEncontrado = this.itensList.find(itemList => itemList.codigo === codigo);
+      const itemEncontrado = this.cardapio.find(itemCardapio => itemCardapio.codigo === codigo);
       if (!itemEncontrado) {
         return 'Item inválido!';
       }
@@ -51,7 +56,7 @@ class CaixaDaLanchonete {
         return 'Quantidade inválida!';
       }
 
-      if (this.isItemExtra(itemEncontrado.codigo, itensSelecionados)) {
+      if (this.isItemExtra(itemEncontrado.codigo, listaItens)) {
         return 'Item extra não pode ser pedido sem o principal';
       }
 
