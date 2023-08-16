@@ -20,6 +20,16 @@ class CaixaDaLanchonete {
     return metodosValidos.includes(metodoDePagamento);
   }
 
+  // Função para verificar itens de acompanhamento
+  isItemExtra(itemCodigo, itensSelecionados) {
+    if (itemCodigo === 'chantily') {
+      return !itensSelecionados['cafe'];
+    } else if (itemCodigo === 'queijo') {
+      return !itensSelecionados['sanduiche'] && !itensSelecionados['combo1'] && !itensSelecionados['combo2'];
+    }
+    return false;
+  }
+
   calcularValorDaCompra(metodoDePagamento, itens) {
     if (itens.length === 0) {
       return 'Não há itens no carrinho de compra!';
@@ -40,12 +50,8 @@ class CaixaDaLanchonete {
       if (quantidade === 0) {
         return 'Quantidade inválida!';
       }
-      
-      if (itemEncontrado.codigo === 'chantily' && !itensSelecionados['cafe']) {
-        return 'Item extra não pode ser pedido sem o principal';
-      }
 
-      if (itemEncontrado.codigo === 'queijo' && !itensSelecionados['sanduiche'] && !itensSelecionados['combo1'] && !itensSelecionados['combo2']) {
+      if (this.isItemExtra(itemEncontrado.codigo, itensSelecionados)) {
         return 'Item extra não pode ser pedido sem o principal';
       }
 
@@ -54,8 +60,8 @@ class CaixaDaLanchonete {
       valorCompra += itemEncontrado.valor * quantidade;
     }
 
-    const DESCONTO_DINHEIRO = 0.05;
-    const ACRESCIMO_CREDITO = 0.03;
+    const desconto_dinheiro = 0.05;
+    const acrescimo_credito = 0.03;
 
     if (!this.validarMetodoPagamento(metodoDePagamento)) {
       return 'Forma de pagamento inválida!';
@@ -63,10 +69,10 @@ class CaixaDaLanchonete {
 
     switch (metodoDePagamento) {
       case 'dinheiro':
-        valorCompra *= (1 - DESCONTO_DINHEIRO);
+        valorCompra *= (1 - desconto_dinheiro);
         break;
       case 'credito':
-        valorCompra *= (1 + ACRESCIMO_CREDITO);
+        valorCompra *= (1 + acrescimo_credito);
         break;
       case 'debito':
         break;
